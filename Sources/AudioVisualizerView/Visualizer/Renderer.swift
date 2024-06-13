@@ -84,7 +84,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     private var uniforms: FragmentUniforms = .init(time: 0, screen_width: 0, screen_height: 0, screen_scale: 0, mouseLocation: .init(0,0))
     private var vizUniforms: VizUniforms = .init(binsCount: 100, buffersCount: 1)
 
-    init?(failable: Bool = true) {
+    init?(failable: Bool = true, liveReload: Bool = false) {
         guard
             let mtlDevice = MTLCreateSystemDefaultDevice(),
             let queue = mtlDevice.makeCommandQueue(),
@@ -96,6 +96,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
 
         self.device = device
         self.queue = queue
+        self.liveReload = liveReload
 
         super.init()
     }
@@ -128,7 +129,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         self.pipelineState = viz.pipelineState(device: device)
     }
     
-    let liveReload = true
+    private let liveReload: Bool
     var shaderContents = ""
     func compileScenePipeline() {
         guard liveReload else { return }
@@ -169,7 +170,6 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         }
 
         do {
-            let pipelineDesc = MTLRenderPipelineDescriptor()
             let library = try device.mtlDevice.makeLibrary(
                 source: shaderContents,
                 options: nil

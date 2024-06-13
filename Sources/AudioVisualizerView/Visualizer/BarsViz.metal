@@ -102,7 +102,7 @@ fragment float4 bars_fragment(VertexOut interpolated [[stage_in]], constant Frag
     
     float barsCount = vizUniforms.binsCount;
     float3 barsCol = barsViz(uv, barsCount, vizUniforms.buffersCount, frequenciesBuffer);
-    
+
     float3 historicalColor = historicalCol(uv, barsCount, vizUniforms.buffersCount, frequenciesBuffer);
     
     col.xyz = historicalColor;

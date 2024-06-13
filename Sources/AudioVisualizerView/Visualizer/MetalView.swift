@@ -12,6 +12,7 @@ import Logging
 
 public struct VizView: View {
     private let isSubscribed: Bool
+    private let liveReloads: Bool
     private let showOptionsOnHoverOnly: Bool
     private let showSell: (() -> ())
 
@@ -19,10 +20,12 @@ public struct VizView: View {
         isSubscribed: Bool,
         focused: Binding<Bool>,
         showOptionsOnHoverOnly: Bool = false,
+        liveReloads: Bool = false,
         showSell: @escaping (() -> ())
     ) {
         self.isSubscribed = isSubscribed
         self.showSell = showSell
+        self.liveReloads = liveReloads
         self._focused = focused
         self.showOptionsOnHoverOnly = showOptionsOnHoverOnly
         let showOptions = !showOptionsOnHoverOnly
@@ -83,7 +86,7 @@ public struct VizView: View {
 
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            MetalSwiftView(viz: $viz)
+            MetalSwiftView(viz: $viz, liveReload: liveReloads)
                 .onTapGesture {
                     withAnimation {
                         focused.toggle()
@@ -153,6 +156,7 @@ private struct MetalSwiftView: UIViewRepresentable {
 
 private struct MetalSwiftView: NSViewRepresentable {
     @Binding var viz: Viz
+    let liveReload: Bool
     @EnvironmentObject var vizProcessor: VisualizerDataBuilder
 
     func makeNSView(context: Context) -> some NSView {
@@ -168,7 +172,7 @@ private struct MetalSwiftView: NSViewRepresentable {
     }
 
     func makeCoordinator() -> Renderer? {
-        Renderer(failable: true)
+        Renderer(failable: true, liveReload: liveReload)
     }
 
     func updateNSView(_ nsView: NSViewType, context: Context) {
