@@ -86,6 +86,7 @@ public struct VizView: View {
 
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
+#if os(macOS)
             MetalSwiftView(viz: $viz, liveReload: liveReloads)
                 .onTapGesture {
                     withAnimation {
@@ -95,6 +96,17 @@ public struct VizView: View {
                         }
                     }
                 }
+            #else
+            MetalSwiftView(viz: $viz)
+                .onTapGesture {
+                    withAnimation {
+                        focused.toggle()
+                        if !focused {
+                            hideAfterDelay()
+                        }
+                    }
+                }
+            #endif
             if showOptions {
                 HStack {
                     options
