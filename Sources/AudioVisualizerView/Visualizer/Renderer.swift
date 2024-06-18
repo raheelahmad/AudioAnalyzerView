@@ -25,6 +25,7 @@ struct FragmentUniforms {
 struct VizUniforms {
     var binsCount: Float
     var buffersCount: Float
+    var maxFrequency: Float
 }
 
 final class Device {
@@ -82,7 +83,11 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     weak var dataProcessor: VisualizerDataBuilder?
 
     private var uniforms: FragmentUniforms = .init(time: 0, screen_width: 0, screen_height: 0, screen_scale: 0, mouseLocation: .init(0,0))
-    private var vizUniforms: VizUniforms = .init(binsCount: 100, buffersCount: 1)
+    private var vizUniforms: VizUniforms = .init(
+        binsCount: 100,
+        buffersCount: 1,
+        maxFrequency: 30
+    )
 
     init?(failable: Bool = true, liveReload: Bool = false) {
         guard
@@ -116,7 +121,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     let gpuLock = DispatchSemaphore(value: 1)
 
     var vertexBuffer: MTLBuffer?
-    var viz: Viz = .bars {
+    var viz: Viz = .kishimisu {
         didSet { setupPipeline() }
     }
 
@@ -200,6 +205,9 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
 
         uniforms.time = Float(currentTime)
         vizUniforms.binsCount = Float(viz.binsCount)
+        let values = (dataProcessor?.allFrequenciesBuffers ?? [])
+//        Make this a buffer of Float as well that are average values
+        vizUniforms.maxFrequency = values.flatMap { $0 }.max() ?? 0
         let buffersCount = dataProcessor?.allFrequenciesBuffers.count ?? 0
         vizUniforms.buffersCount = Float(buffersCount)
 

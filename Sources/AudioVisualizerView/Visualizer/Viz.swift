@@ -2,6 +2,7 @@ import MetalKit
 
 enum Viz: String, CaseIterable, Identifiable {
     case radialFunk
+    case kishimisu
     case bars
     case spectrum
 
@@ -15,6 +16,8 @@ enum Viz: String, CaseIterable, Identifiable {
         switch self {
         case .radialFunk:
             "RadialViz"
+        case .kishimisu:
+            "Kishimisu"
         case .bars:
             "BarsViz"
         case .spectrum:
@@ -30,6 +33,8 @@ enum Viz: String, CaseIterable, Identifiable {
             return "spectrum_vertex"
         case .bars:
             return "bars_vertex"
+        case .kishimisu:
+            return "kishimisu_vertex"
         }
     }
 
@@ -41,6 +46,8 @@ enum Viz: String, CaseIterable, Identifiable {
             return "spectrum_fragment"
         case .bars:
             return "bars_fragment"
+        case .kishimisu:
+            return "kishimisu_fragment"
         }
     }
 }
@@ -53,6 +60,8 @@ extension Viz {
         case .spectrum:
             return 80
         case .bars:
+            return 40
+        case .kishimisu:
             return 50
         }
     }
@@ -64,6 +73,8 @@ extension Viz {
         case .spectrum:
             return 80
         case .bars:
+            return 30
+        case .kishimisu:
             return 30
         }
     }

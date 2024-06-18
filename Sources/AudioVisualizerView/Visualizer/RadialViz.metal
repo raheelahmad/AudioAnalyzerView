@@ -18,15 +18,6 @@ struct VertexOut {
     float4 color;
 };
 
-float3 palette(float t) {
-    float3 a = float3(0.738, 0.870, 0.870);
-    float3 b = float3(0.228, 0.500, 0.500);
-    float3 c = float3(1.0, 1.0, 1.0);
-    float3 d = float3(0.000, 0.333, 0.667);
-
-    return a + b * cos(6.28318 * (c * t + d));
-}
-
 vertex VertexOut radial_viz_vertex(const device VertexIn *vertices [[buffer(0)]], unsigned int vid [[vertex_id]]) {
     VertexOut in;
     in.pos = {vertices[vid].pos.x, vertices[vid].pos.y, 0, 1};
@@ -51,7 +42,6 @@ float drawCircle(float r, float polarRadius, float thickness)
     return     smoothstep(r, r + thickness, polarRadius) -
             smoothstep(r + thickness, r + 2.0 * thickness, polarRadius);
 }
-
 
 fragment float4 radial_viz_fragment(
                                        VertexOut interpolated [[stage_in]],
@@ -94,7 +84,7 @@ fragment float4 radial_viz_fragment(
     float rotationDistortion = 0.2 * sin01(uniforms.time);
     for (float i = 0; i < numRings; i += 1.0) {
         float baseR;
-        baseR = 0.3 * sin01(freq);
+        baseR = 0.4 * sin01(freq);
         float r = baseR + inc;
 
         r += rotationDistortion * (0.1 + 0.2 * sin(pa + uniforms.time * (i - 0.1)/4));

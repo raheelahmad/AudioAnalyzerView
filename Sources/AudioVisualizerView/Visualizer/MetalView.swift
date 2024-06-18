@@ -33,7 +33,7 @@ public struct VizView: View {
     }
 
     @EnvironmentObject private var vizDataProcessor: VisualizerDataBuilder
-    @State private var viz: Viz = .bars
+    @State private var viz: Viz = .kishimisu
     @Binding private var focused: Bool
     @State private var showOptions = false
 
@@ -51,6 +51,9 @@ public struct VizView: View {
                 case .spectrum: Text("spectrum")
                         .font(.footnote.monospaced())
                         .tag(Viz.spectrum)
+                case .kishimisu: Text("temp - Kishimisu")
+                        .font(.footnote.monospaced())
+                        .tag(Viz.kishimisu)
                 }
             }
         } label: {

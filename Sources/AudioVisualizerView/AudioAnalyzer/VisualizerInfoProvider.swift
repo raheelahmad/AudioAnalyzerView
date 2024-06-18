@@ -40,6 +40,7 @@ public final class VisualizerDataBuilder: ObservableObject {
     }
 
     public let maxBuffersCount = 8
+    private var maxMaxFrequenciesCount: Int { maxBuffersCount / 2 }
     public var hasBuffers: Bool {
         freqeuencyBuffer != nil && loudnessBuffer != nil
     }
@@ -52,6 +53,18 @@ public final class VisualizerDataBuilder: ObservableObject {
             }
             allFrequenciesBuffers.append(frequencyVertices)
             self.allFrequenciesBuffers = allFrequenciesBuffers
+
+            if !allFrequenciesBuffers.isEmpty {
+                let newAverage = allFrequenciesBuffers.map {
+                    $0.max() ?? 0
+                }.reduce(0, +) / Float(allFrequenciesBuffers.count)
+                if averageMaxFrequencies.count == maxMaxFrequenciesCount {
+                    averageMaxFrequencies = Array(
+                        averageMaxFrequencies.dropFirst()
+                    )
+                }
+                averageMaxFrequencies.append(newAverage)
+            }
         }
     }
 
@@ -65,7 +78,16 @@ public final class VisualizerDataBuilder: ObservableObject {
             .subscribe(self.loudness)
             .store(in: &subscriptions)
     }
+    
+    public private(set) var averageMaxFrequency: Float = 0.0
 
+    private var averageMaxFrequencies: [Float] = [] {
+        didSet {
+            guard !averageMaxFrequencies.isEmpty else { return }
+            averageMaxFrequency = averageMaxFrequencies
+                .reduce(0, +) / Float(averageMaxFrequencies.count)
+        }
+    }
     public var allFrequenciesBuffers: [[Float]] = [] {
         didSet {
             guard let binsCount = renderInfoProvider?.binsCount, let device, !allFrequenciesBuffers.isEmpty else {
