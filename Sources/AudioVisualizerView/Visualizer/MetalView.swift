@@ -12,7 +12,7 @@ import Logging
 
 public struct VizView: View {
     private let isSubscribed: Bool
-    private let liveReloads: Bool
+    private let config: RendererConfig
     private let showOptionsOnHoverOnly: Bool
     private let showSell: (() -> ())
 
@@ -20,12 +20,12 @@ public struct VizView: View {
         isSubscribed: Bool,
         focused: Binding<Bool>,
         showOptionsOnHoverOnly: Bool = false,
-        liveReloads: Bool = false,
+        config: RendererConfig,
         showSell: @escaping (() -> ())
     ) {
         self.isSubscribed = isSubscribed
         self.showSell = showSell
-        self.liveReloads = liveReloads
+        self.config = config
         self._focused = focused
         self.showOptionsOnHoverOnly = showOptionsOnHoverOnly
         let showOptions = !showOptionsOnHoverOnly
@@ -90,7 +90,7 @@ public struct VizView: View {
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
 #if os(macOS)
-            MetalSwiftView(viz: $viz, liveReload: liveReloads)
+            MetalSwiftView(viz: $viz, config: config)
                 .onTapGesture {
                     withAnimation {
                         focused.toggle()
@@ -171,7 +171,7 @@ private struct MetalSwiftView: UIViewRepresentable {
 
 private struct MetalSwiftView: NSViewRepresentable {
     @Binding var viz: Viz
-    let liveReload: Bool
+    let config: RendererConfig
     @EnvironmentObject var vizProcessor: VisualizerDataBuilder
 
     func makeNSView(context: Context) -> some NSView {
@@ -187,7 +187,7 @@ private struct MetalSwiftView: NSViewRepresentable {
     }
 
     func makeCoordinator() -> Renderer? {
-        Renderer(failable: true, liveReload: liveReload)
+        Renderer(config: config)
     }
 
     func updateNSView(_ nsView: NSViewType, context: Context) {

@@ -27,15 +27,15 @@ vertex VertexOut bars_vertex(const device VertexIn *vertices [[buffer(0)]], unsi
 struct VizUniforms {
     float binsCount;
     float buffersCount;
-    float maxFrequency;
+    float maxAmplitude;
 };
 
-float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxFrequency, constant float *frequenciesBuffer) {
+float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxAmplitude, constant float *frequenciesBuffer) {
     float3 col;
     // Set a cap, but otherwise we are using the actual max amplitude
-    maxFrequency = max(maxFrequency, 40.0);
+    maxAmplitude = max(maxAmplitude, 40.0);
     // Scale so that we the bars never reach the top:
-    maxFrequency *= 1.2;
+    maxAmplitude *= 1.2;
 
     float squareInset = 0.3;
     float numColSegments = barsCount;
@@ -44,7 +44,7 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxFrequenc
 
     float freq = 0;
 
-    float maxBuffersToUse = 9;
+    float maxBuffersToUse = 7;
     float buffersToUse = min(maxBuffersToUse, buffersCount - 1);
     if (HISTORICAL == 0) {
         buffersToUse = 1;
@@ -59,7 +59,7 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxFrequenc
     }
 
     freq = freq/buffersToUse; // average
-    float freqNorm = lerp(freq, 0, maxFrequency, 0, 1.0);
+    float freqNorm = lerp(freq, 0, maxAmplitude, 0, 1.0);
     float yvFract = step(uv.y, freqNorm);
 
     float yv = uv.y * numColSegments;
@@ -70,14 +70,15 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxFrequenc
     float xv = uv.x * barsCount;
     float xvInSequareFract = step(squareInset, fract(xv));
 
-    col.xyz = yvFract * yvInSquareFract * xvInSequareFract;
+    float3 bgCol = float3(0.10, 0.12, 0.13);
+    col.xyz = bgCol + yvFract * yvInSquareFract * xvInSequareFract;
 
-    col.xyz *= mix(float3(0.2, 0.2, 0.9), float3(0.9, 0.2, 0.2), isTopSquare);
+    col.xyz *= mix(float3(0.24, 0.52, 0.9), float3(0.9, 0.2, 0.2), isTopSquare);
 
     return col;
 }
 
-float3 historicalCol(float2 uv, float barsCount, float buffersCount, float maxFreq, constant float *frequenciesBuffer) {
+float3 historicalCol(float2 uv, float barsCount, float buffersCount, float maxAmplitude, constant float *frequenciesBuffer) {
     // TASK: make this look like a historical frequency graph
     float3 col = 0;
 
@@ -91,7 +92,7 @@ float3 historicalCol(float2 uv, float barsCount, float buffersCount, float maxFr
     st.x = fract(uv.x * barsCount);
 
     float frequency = frequenciesBuffer[frequencyIndex];
-    float normFrequency = lerp(frequency, 0, maxFreq, 0, 1);
+    float normFrequency = lerp(frequency, 0, maxAmplitude, 0, 1);
     float t = step(st.y - normFrequency, 0.0);
 //    float t = smoothstep(st.y, st.y+0.01,  normFrequency);
 
@@ -108,13 +109,13 @@ fragment float4 bars_fragment(VertexOut interpolated [[stage_in]], constant Frag
 
     float width_to_height = uniforms.screen_width / uniforms.screen_height;
     float2 uv = {interpolated.pos.x / uniforms.screen_width, 1 - interpolated.pos.y/uniforms.screen_height};
-    
+
     float4 col = float4(0);
 
     float barsCount = vizUniforms.binsCount;
-    float3 barsCol = barsViz(uv, barsCount, vizUniforms.buffersCount, vizUniforms.maxFrequency, frequenciesBuffer);
+    float3 barsCol = barsViz(uv, barsCount, vizUniforms.buffersCount, vizUniforms.maxAmplitude, frequenciesBuffer);
 
-    float3 historicalColor = historicalCol(uv, barsCount, vizUniforms.buffersCount, vizUniforms.maxFrequency, frequenciesBuffer);
+    float3 historicalColor = historicalCol(uv, barsCount, vizUniforms.buffersCount, vizUniforms.maxAmplitude, frequenciesBuffer);
 
     col.xyz = barsCol;
 //        col.xyz = historicalColor;

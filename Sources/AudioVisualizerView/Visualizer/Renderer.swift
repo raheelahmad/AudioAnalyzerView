@@ -28,6 +28,24 @@ struct VizUniforms {
     var maxFrequency: Float
 }
 
+public struct RendererConfig {
+    public let maxFrequencyAmpitude: Float?
+    public let liveReload: Bool
+    public let historicalBuffers: Int
+
+    public static let muziqi: RendererConfig = .init(
+        maxFrequencyAmpitude: 20,
+        liveReload: false,
+        historicalBuffers: 4
+    )
+
+    public static let awaaz: RendererConfig = .init(
+        maxFrequencyAmpitude: nil,
+        liveReload: true,
+        historicalBuffers: 8
+    )
+}
+
 final class Device {
     init?(mtlDevice: MTLDevice, pixelFormat: MTLPixelFormat) {
         self.mtlDevice = mtlDevice
@@ -78,6 +96,8 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     private let compileQueue = DispatchQueue.init(label: "Shader compile queue")
 
     static var aspectRatio: Float = 1.0
+    
+    private let config: RendererConfig
 
     var pipelineState: MTLRenderPipelineState!
     weak var dataProcessor: VisualizerDataBuilder?
@@ -89,7 +109,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         maxFrequency: 30
     )
 
-    init?(failable: Bool = true, liveReload: Bool = false) {
+    init?(failable: Bool = true, config: RendererConfig) {
         guard
             let mtlDevice = MTLCreateSystemDefaultDevice(),
             let queue = mtlDevice.makeCommandQueue(),
@@ -101,7 +121,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
 
         self.device = device
         self.queue = queue
-        self.liveReload = liveReload
+        self.config = config
 
         super.init()
     }
@@ -134,7 +154,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         self.pipelineState = viz.pipelineState(device: device)
     }
     
-    private let liveReload: Bool
+    private var liveReload: Bool { config.liveReload }
     var shaderContents = ""
     func compileScenePipeline() {
         guard liveReload else { return }
@@ -206,7 +226,6 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         uniforms.time = Float(currentTime)
         vizUniforms.binsCount = Float(viz.binsCount)
         let values = (dataProcessor?.allFrequenciesBuffers ?? [])
-//        Make this a buffer of Float as well that are average values
         vizUniforms.maxFrequency = values.flatMap { $0 }.max() ?? 0
         let buffersCount = dataProcessor?.allFrequenciesBuffers.count ?? 0
         vizUniforms.buffersCount = Float(buffersCount)

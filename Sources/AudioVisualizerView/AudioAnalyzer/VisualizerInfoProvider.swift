@@ -39,7 +39,7 @@ public final class VisualizerDataBuilder: ObservableObject {
         }
     }
 
-    public let maxBuffersCount = 8
+    public let maxBuffersCount: Int
     private var maxMaxFrequenciesCount: Int { maxBuffersCount / 2 }
     public var hasBuffers: Bool {
         freqeuencyBuffer != nil && loudnessBuffer != nil
@@ -72,7 +72,8 @@ public final class VisualizerDataBuilder: ObservableObject {
     let loudness = PassthroughSubject<Float, Never>.init()
     private let liveLoudnessignal = PassthroughSubject<Float, Never>.init()
 
-    public init() {
+    public init(maxBuffersCount: Int) {
+        self.maxBuffersCount = maxBuffersCount
         liveLoudnessignal
             .throttle(for: 0.15, scheduler: RunLoop.main, latest: true)
             .subscribe(self.loudness)
@@ -316,6 +317,7 @@ public final class WaveformBuilder {
     }
 }
 
+/*
 public final class VisualizerInfoProvider: ObservableObject {
     public let dataBuilder: VisualizerDataBuilder
     public let waveformBuilder: WaveformBuilder
@@ -363,3 +365,4 @@ extension VisualizerInfoProvider {
         return p
     }
 }
+*/
