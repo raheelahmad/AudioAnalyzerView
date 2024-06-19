@@ -33,7 +33,7 @@ public struct VizView: View {
     }
 
     @EnvironmentObject private var vizDataProcessor: VisualizerDataBuilder
-    @State private var viz: Viz = .kishimisu
+    @State private var viz: Viz = .bars
     @Binding private var focused: Bool
     @State private var showOptions = false
 

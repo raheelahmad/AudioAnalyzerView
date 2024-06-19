@@ -32,23 +32,19 @@ struct VizUniforms {
 
 float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxFrequency, constant float *frequenciesBuffer) {
     float3 col;
-    // TODO: this could come from CPU.
-//    float maxFrequency = 80;
-    maxFrequency *= 1.5;
-
-//    maxFrequency = 80;
+    // Set a cap, but otherwise we are using the actual max amplitude
+    maxFrequency = max(maxFrequency, 40.0);
+    // Scale so that we the bars never reach the top:
+    maxFrequency *= 1.2;
 
     float squareInset = 0.3;
-    //    barsCount = numSquares;
-    // number of vertidal segments in a column
     float numColSegments = barsCount;
 
 #define HISTORICAL 1
 
     float freq = 0;
 
-    float maxBuffersToUse = 3;
-//    maxBuffersToUse = buffersCount - 1;
+    float maxBuffersToUse = 9;
     float buffersToUse = min(maxBuffersToUse, buffersCount - 1);
     if (HISTORICAL == 0) {
         buffersToUse = 1;
@@ -61,9 +57,9 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxFrequenc
         // The frequency of this bar
         freq += frequenciesBuffer[frequencyIndex];
     }
-    freq = freq/buffersToUse;
-    float freqNorm = lerp(freq, 0, maxFrequency, 0, 1.0);
 
+    freq = freq/buffersToUse; // average
+    float freqNorm = lerp(freq, 0, maxFrequency, 0, 1.0);
     float yvFract = step(uv.y, freqNorm);
 
     float yv = uv.y * numColSegments;

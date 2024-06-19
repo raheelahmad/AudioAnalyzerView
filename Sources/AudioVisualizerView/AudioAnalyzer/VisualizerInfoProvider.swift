@@ -102,9 +102,6 @@ public final class VisualizerDataBuilder: ObservableObject {
                     length: frequenciesBuffer.count * MemoryLayout<Float>.stride,
                     options: []
                 )!
-            print(
-                "Frequencies buffer count: \(frequenciesBuffer.count): \(allFrequenciesBuffers.count) * \(binsCount)"
-            )
         }
     }
     public private(set) var loudnessBuffer: MTLBuffer?
