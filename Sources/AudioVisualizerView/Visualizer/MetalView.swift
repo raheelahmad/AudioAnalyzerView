@@ -100,7 +100,7 @@ public struct VizView: View {
                     }
                 }
             #else
-            MetalSwiftView(viz: $viz)
+            MetalSwiftView(viz: $viz, config: config)
                 .onTapGesture {
                     withAnimation {
                         focused.toggle()
@@ -142,6 +142,7 @@ public struct VizView: View {
 #if os(iOS)
 private struct MetalSwiftView: UIViewRepresentable {
     @Binding var viz: Viz
+    let config: RendererConfig
     @EnvironmentObject var vizProcessor: VisualizerDataBuilder
 
     func makeUIView(context: Context) -> MTKView {
@@ -157,7 +158,7 @@ private struct MetalSwiftView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Renderer? {
-        Renderer(failable: true)
+        Renderer(failable: true, config: config)
     }
 
     func updateUIView(_ uiView: MTKView, context: Context) {

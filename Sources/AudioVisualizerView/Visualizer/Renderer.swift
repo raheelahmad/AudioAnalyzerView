@@ -8,7 +8,6 @@
 import Metal
 import MetalKit
 import Logging
-import AudioVisualizerView
 
 struct Vertex {
     var position: vector_float2;

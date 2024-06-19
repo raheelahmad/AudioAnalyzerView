@@ -14,7 +14,6 @@ import Logging
 import Combine
 
 
-/*
 public final class VisualizerInfoProvider: ObservableObject {
     public let dataBuilder: VisualizerDataBuilder
     public let waveformBuilder: WaveformBuilder
@@ -30,8 +29,8 @@ public final class VisualizerInfoProvider: ObservableObject {
         }
     }
 
-    public init() {
-        dataBuilder = .init()
+    public init(renderConfig: RendererConfig) {
+        dataBuilder = .init(maxBuffersCount: renderConfig.historicalBuffers)
         waveformBuilder = .init()
         dataBuilder.loudness.sink { [weak self] in
             self?.loudness = Double($0)
@@ -56,10 +55,9 @@ public final class VisualizerInfoProvider: ObservableObject {
 
 extension VisualizerInfoProvider {
     public static var forPreview: VisualizerInfoProvider {
-        let p = VisualizerInfoProvider()
+        let p = VisualizerInfoProvider(renderConfig: .muziqi)
         p.waveformValues = (0..<100).map { _ in Float.random(in: 0..<(1.0))}
         p.snapshotWaveformValues = .init(waveformValues: (0..<100).map { _ in Float.random(in: 0..<(1.0))})
         return p
     }
 }
-*/
