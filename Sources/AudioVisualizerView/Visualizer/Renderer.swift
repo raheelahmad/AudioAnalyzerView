@@ -24,7 +24,7 @@ struct FragmentUniforms {
 struct VizUniforms {
     var binsCount: Float
     var buffersCount: Float
-    var maxFrequency: Float
+    var maxAmplitude: Float
 }
 
 public struct RendererConfig {
@@ -115,7 +115,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     private var vizUniforms: VizUniforms = .init(
         binsCount: 100,
         buffersCount: 1,
-        maxFrequency: 30
+        maxAmplitude: 30
     )
 
     init?(failable: Bool = true, config: RendererConfig) {
@@ -235,7 +235,14 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         uniforms.time = Float(currentTime)
         vizUniforms.binsCount = Float(viz.binsCount)
         let values = (dataProcessor?.allFrequenciesBuffers ?? [])
-        vizUniforms.maxFrequency = values.flatMap { $0 }.max() ?? 0
+        var maxAmplitude = values.flatMap { $0 }.max() ?? 0
+        if let configMaxAmplitude = config.maxFrequencyAmpitude {
+            maxAmplitude = min(
+                maxAmplitude,
+                configMaxAmplitude
+            )
+        }
+        vizUniforms.maxAmplitude = maxAmplitude
         let buffersCount = dataProcessor?.allFrequenciesBuffers.count ?? 0
         vizUniforms.buffersCount = Float(buffersCount)
 

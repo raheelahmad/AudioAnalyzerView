@@ -33,7 +33,6 @@ struct VizUniforms {
 float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxAmplitude, constant float *frequenciesBuffer) {
     float3 col;
     // Set a cap, but otherwise we are using the actual max amplitude
-    maxAmplitude = max(maxAmplitude, 40.0);
     // Scale so that we the bars never reach the top:
     maxAmplitude *= 1.2;
 

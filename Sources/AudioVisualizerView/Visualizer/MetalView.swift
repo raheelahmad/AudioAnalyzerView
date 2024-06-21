@@ -168,7 +168,6 @@ private struct MetalSwiftView: UIViewRepresentable {
 
 private struct MetalSwiftView: NSViewRepresentable {
     @Binding var viz: Viz
-    let config: RendererConfig
     @EnvironmentObject var vizProcessor: VisualizerDataBuilder
 
     func makeNSView(context: Context) -> some NSView {
@@ -184,7 +183,7 @@ private struct MetalSwiftView: NSViewRepresentable {
     }
 
     func makeCoordinator() -> Renderer? {
-        Renderer(config: config)
+        Renderer(config: vizProcessor.config)
     }
 
     func updateNSView(_ nsView: NSViewType, context: Context) {
