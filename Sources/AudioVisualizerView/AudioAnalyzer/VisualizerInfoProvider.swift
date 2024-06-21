@@ -55,7 +55,13 @@ public final class VisualizerInfoProvider: ObservableObject {
 
 extension VisualizerInfoProvider {
     public static var forPreview: VisualizerInfoProvider {
-        let p = VisualizerInfoProvider(config: .muziqi)
+        let p = VisualizerInfoProvider(
+            config: .init(
+                amplitude: .init(min: 20, max: 40),
+                liveReload: false,
+                historicalBuffers: 4
+            )
+        )
         p.waveformValues = (0..<100).map { _ in Float.random(in: 0..<(1.0))}
         p.snapshotWaveformValues = .init(waveformValues: (0..<100).map { _ in Float.random(in: 0..<(1.0))})
         return p

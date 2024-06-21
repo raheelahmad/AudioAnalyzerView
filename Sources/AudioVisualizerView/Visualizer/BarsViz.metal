@@ -34,7 +34,7 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxAmplitud
     float3 col;
     // Set a cap, but otherwise we are using the actual max amplitude
     // Scale so that we the bars never reach the top:
-    maxAmplitude *= 1.2;
+    maxAmplitude *= 1.8;
 
     float squareInset = 0.3;
     float numColSegments = barsCount;
@@ -43,8 +43,7 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxAmplitud
 
     float freq = 0;
 
-    float maxBuffersToUse = 7;
-    float buffersToUse = min(maxBuffersToUse, buffersCount - 1);
+    float buffersToUse = buffersCount - 1;
     if (HISTORICAL == 0) {
         buffersToUse = 1;
     }

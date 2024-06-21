@@ -28,31 +28,29 @@ struct VizUniforms {
 }
 
 public struct RendererConfig {
+    public struct AmplitudeConfig {
+        public init(min: Float?, max: Float?) {
+            self.min = min
+            self.max = max
+        }
+        
+        public let min: Float?
+        public let max: Float?
+    }
+
     public init(
-        maxFrequencyAmpitude: Float? = nil,
+        amplitude: AmplitudeConfig,
         liveReload: Bool,
         historicalBuffers: Int
     ) {
-        self.maxFrequencyAmpitude = maxFrequencyAmpitude
+        self.amplitude = amplitude
         self.liveReload = liveReload
         self.historicalBuffers = historicalBuffers
     }
     
-    public let maxFrequencyAmpitude: Float?
+    public let amplitude: AmplitudeConfig?
     public let liveReload: Bool
     public let historicalBuffers: Int
-
-    public static let muziqi: RendererConfig = .init(
-        maxFrequencyAmpitude: 20,
-        liveReload: false,
-        historicalBuffers: 4
-    )
-
-    public static let awaaz: RendererConfig = .init(
-        maxFrequencyAmpitude: nil,
-        liveReload: true,
-        historicalBuffers: 8
-    )
 }
 
 final class Device {
@@ -236,10 +234,17 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         vizUniforms.binsCount = Float(viz.binsCount)
         let values = (dataProcessor?.allFrequenciesBuffers ?? [])
         var maxAmplitude = values.flatMap { $0 }.max() ?? 0
-        if let configMaxAmplitude = config.maxFrequencyAmpitude {
-            maxAmplitude = min(
+        let amplitudeConfig = config.amplitude
+        if let maxConfigAmplitude = amplitudeConfig?.max {
+            maxAmplitude = max(
                 maxAmplitude,
-                configMaxAmplitude
+                maxConfigAmplitude
+            )
+        }
+        if let minConfigAmplitude = amplitudeConfig?.min {
+            maxAmplitude = max(
+                maxAmplitude,
+                minConfigAmplitude
             )
         }
         vizUniforms.maxAmplitude = maxAmplitude
