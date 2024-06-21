@@ -28,6 +28,16 @@ struct VizUniforms {
 }
 
 public struct RendererConfig {
+    public init(
+        maxFrequencyAmpitude: Float? = nil,
+        liveReload: Bool,
+        historicalBuffers: Int
+    ) {
+        self.maxFrequencyAmpitude = maxFrequencyAmpitude
+        self.liveReload = liveReload
+        self.historicalBuffers = historicalBuffers
+    }
+    
     public let maxFrequencyAmpitude: Float?
     public let liveReload: Bool
     public let historicalBuffers: Int

@@ -12,7 +12,6 @@ import Logging
 
 public struct VizView: View {
     private let isSubscribed: Bool
-    private let config: RendererConfig
     private let showOptionsOnHoverOnly: Bool
     private let showSell: (() -> ())
 
@@ -20,12 +19,10 @@ public struct VizView: View {
         isSubscribed: Bool,
         focused: Binding<Bool>,
         showOptionsOnHoverOnly: Bool = false,
-        config: RendererConfig,
         showSell: @escaping (() -> ())
     ) {
         self.isSubscribed = isSubscribed
         self.showSell = showSell
-        self.config = config
         self._focused = focused
         self.showOptionsOnHoverOnly = showOptionsOnHoverOnly
         let showOptions = !showOptionsOnHoverOnly
@@ -90,7 +87,7 @@ public struct VizView: View {
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
 #if os(macOS)
-            MetalSwiftView(viz: $viz, config: config)
+            MetalSwiftView(viz: $viz)
                 .onTapGesture {
                     withAnimation {
                         focused.toggle()
@@ -100,7 +97,7 @@ public struct VizView: View {
                     }
                 }
             #else
-            MetalSwiftView(viz: $viz, config: config)
+            MetalSwiftView(viz: $viz)
                 .onTapGesture {
                     withAnimation {
                         focused.toggle()
@@ -142,7 +139,6 @@ public struct VizView: View {
 #if os(iOS)
 private struct MetalSwiftView: UIViewRepresentable {
     @Binding var viz: Viz
-    let config: RendererConfig
     @EnvironmentObject var vizProcessor: VisualizerDataBuilder
 
     func makeUIView(context: Context) -> MTKView {
@@ -158,7 +154,7 @@ private struct MetalSwiftView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Renderer? {
-        Renderer(failable: true, config: config)
+        Renderer(failable: true, config: vizProcessor.config)
     }
 
     func updateUIView(_ uiView: MTKView, context: Context) {

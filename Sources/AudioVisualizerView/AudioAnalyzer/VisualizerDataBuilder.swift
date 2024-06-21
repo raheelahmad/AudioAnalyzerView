@@ -30,7 +30,9 @@ public final class VisualizerDataBuilder: ObservableObject {
         }
     }
 
-    public let maxBuffersCount: Int
+    public var maxBuffersCount: Int {
+        config.historicalBuffers
+    }
     private var maxMaxFrequenciesCount: Int { maxBuffersCount / 2 }
     public var hasBuffers: Bool {
         freqeuencyBuffer != nil && loudnessBuffer != nil
@@ -61,10 +63,11 @@ public final class VisualizerDataBuilder: ObservableObject {
 
     private var subscriptions: [AnyCancellable] = []
     let loudness = PassthroughSubject<Float, Never>.init()
+    let config: RendererConfig
     private let liveLoudnessignal = PassthroughSubject<Float, Never>.init()
 
-    public init(maxBuffersCount: Int) {
-        self.maxBuffersCount = maxBuffersCount
+    public init(config: RendererConfig) {
+        self.config = config
         liveLoudnessignal
             .throttle(for: 0.15, scheduler: RunLoop.main, latest: true)
             .subscribe(self.loudness)
