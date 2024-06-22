@@ -30,7 +30,7 @@ struct VizUniforms {
     float maxAmplitude;
 };
 
-float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxAmplitude, constant float *frequenciesBuffer) {
+float3 barsViz(float2 uv, float w_to_h, float barsCount, float buffersCount, float maxAmplitude, constant float *frequenciesBuffer) {
     float3 col;
     // Set a cap, but otherwise we are using the actual max amplitude
     // Scale so that we the bars never reach the top:
@@ -60,10 +60,10 @@ float3 barsViz(float2 uv, float barsCount, float buffersCount, float maxAmplitud
     float freqNorm = lerp(freq, 0, maxAmplitude, 0, 1.0);
     float yvFract = step(uv.y, freqNorm);
 
-    float yv = uv.y * numColSegments;
+    float yv = uv.y * numColSegments / w_to_h;
     float yvInSquareFract = step(squareInset, fract(yv));
     // TODO: could use a step() here probably
-    float isTopSquare = ceil(freqNorm * numColSegments) == ceil(yv);
+    float isTopSquare = ceil(freqNorm * numColSegments / w_to_h) == ceil(yv);
 
     float xv = uv.x * barsCount;
     float xvInSequareFract = step(squareInset, fract(xv));
@@ -111,7 +111,7 @@ fragment float4 bars_fragment(VertexOut interpolated [[stage_in]], constant Frag
     float4 col = float4(0);
 
     float barsCount = vizUniforms.binsCount;
-    float3 barsCol = barsViz(uv, barsCount, vizUniforms.buffersCount, vizUniforms.maxAmplitude, frequenciesBuffer);
+    float3 barsCol = barsViz(uv, width_to_height, barsCount, vizUniforms.buffersCount, vizUniforms.maxAmplitude, frequenciesBuffer);
 
     float3 historicalColor = historicalCol(uv, barsCount, vizUniforms.buffersCount, vizUniforms.maxAmplitude, frequenciesBuffer);
 
