@@ -89,7 +89,7 @@ public final class VisualizerDataBuilder: ObservableObject {
                 //                assertionFailure("Incomplete device info")
                 return
             }
-            assert(allFrequenciesBuffers.allSatisfy { $0.count == binsCount })
+//            assert(allFrequenciesBuffers.allSatisfy { $0.count == binsCount })
             let frequenciesBuffer = allFrequenciesBuffers.flatMap { $0 }
             freqeuencyBuffer = device
                 .makeBuffer(

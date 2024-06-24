@@ -14,6 +14,8 @@ import Logging
 import Combine
 
 
+/// Only a liaison between the VizDataBuilder (which processes the audio and produces the data)
+/// and the user.
 public final class VisualizerInfoProvider: ObservableObject {
     public let dataBuilder: VisualizerDataBuilder
     public let waveformBuilder: WaveformBuilder

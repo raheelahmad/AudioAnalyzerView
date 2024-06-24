@@ -48,9 +48,9 @@ public struct VizView: View {
                 case .spectrum: Text("spectrum")
                         .font(.footnote.monospaced())
                         .tag(Viz.spectrum)
-                case .kishimisu: Text("temp - Kishimisu")
-                        .font(.footnote.monospaced())
-                        .tag(Viz.kishimisu)
+//                case .kishimisu: Text("temp - Kishimisu")
+//                        .font(.footnote.monospaced())
+//                        .tag(Viz.kishimisu)
                 }
             }
         } label: {
@@ -113,6 +113,7 @@ public struct VizView: View {
                     if !isSubscribed {
                         sellButton
                     }
+                    Spacer()
                     Spacer()
                 }
                 .transition(.opacity.animation(.easeInOut(duration: 0.6)))

@@ -72,7 +72,11 @@ final class Device {
 
 final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     var binsCount: Int {
-        viz.binsCount
+        if viz.usesScreenWidthForBins {
+            Int(uniforms.screen_width/2)
+        } else {
+            viz.binsCount
+        }
     }
 
     var scalingMultiplier: Double {
@@ -148,7 +152,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
     let gpuLock = DispatchSemaphore(value: 1)
 
     var vertexBuffer: MTLBuffer?
-    var viz: Viz = .kishimisu {
+    var viz: Viz = .bars {
         didSet { setupPipeline() }
     }
 
@@ -231,7 +235,7 @@ final class Renderer: NSObject, MTKViewDelegate, VisualizerRenderInfoProvider {
         lastRenderTime = systemTime
 
         uniforms.time = Float(currentTime)
-        vizUniforms.binsCount = Float(viz.binsCount)
+        vizUniforms.binsCount = Float(binsCount)
         let values = (dataProcessor?.allFrequenciesBuffers ?? [])
         var maxAmplitude = values.flatMap { $0 }.max() ?? 0
         let amplitudeConfig = config.amplitude
