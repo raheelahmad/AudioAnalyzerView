@@ -9,7 +9,7 @@ enum Viz: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     static var locked: [Viz] {
-        [.radialFunk]
+        [.bars]
     }
     
     var fileName: String {
