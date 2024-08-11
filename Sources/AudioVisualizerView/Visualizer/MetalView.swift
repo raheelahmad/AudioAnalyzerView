@@ -68,7 +68,7 @@ public struct VizView: View {
                 .font(.caption)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 8)
-                .padding(.vertical, 0)
+                .padding(.vertical, 3)
                 .background(
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
                         .fill(Color(red: 89/255.0, green: 178/255.0, blue: 101/255.0))
