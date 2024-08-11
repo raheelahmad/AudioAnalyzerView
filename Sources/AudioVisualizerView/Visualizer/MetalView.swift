@@ -109,12 +109,11 @@ public struct VizView: View {
             #endif
             if showOptions {
                 HStack {
+                    Spacer()
                     options
                     if !isSubscribed {
                         sellButton
                     }
-                    Spacer()
-                    Spacer()
                 }
                 .transition(.opacity.animation(.easeInOut(duration: 0.6)))
                 .padding(.horizontal, 34)
